@@ -7,49 +7,22 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Custom Scrollbar for cleaner look */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #d1d5db; 
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #9ca3af; 
-        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
 
-        /* Chart Container Strict Styling */
+        /* Chart Container */
         .chart-container {
             position: relative;
             width: 100%;
-            max-width: 650px; /* max-w-2xl equiv */
-            margin-left: auto;
-            margin-right: auto;
+            max-width: 650px;
+            margin: 0 auto;
             height: 350px;
-            max-height: 400px;
         }
         
-        /* Arrow utility for Block Diagrams */
-        .arrow-right::after {
-            content: '?';
-            font-size: 24px;
-            color: #4b5563;
-            margin: 0 8px;
-        }
-        
-        .arrow-down::after {
-            content: '?';
-            font-size: 24px;
-            color: #4b5563;
-            display: block;
-            text-align: center;
-        }
-
-        /* Diagram Line Connections (Simulated with Borders) */
+        /* Diagram Connectors */
         .connector-h {
             height: 2px;
             background-color: #4b5563;
@@ -65,385 +38,27 @@
             border-bottom: 6px solid transparent;
             border-left: 8px solid #4b5563;
         }
+        
+        /* Animation Utilities */
+        .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
-    <!-- Chosen Palette: Warm Neutrals (Stone/Warm Gray background) with Soft Functional Colors (Blue/Green/Orange) -->
-    <!-- Application Structure Plan: 
-         1. Header: Title & Context.
-         2. Tabbed Navigation: Anatomy (Definitions), Simulator (Interactive Learning), Algebra (Process Visualization), Quiz (Assessment).
-         3. Anatomy Section: Interactive "Hotspot" diagram. User clicks blocks to see Vocabulary definitions.
-         4. Simulator Section: Dynamic Chart.js Step Response. Sliders for Zeta/Omega. Real-time metric calculation (Rise Time, Overshoot) to reinforce the "Damping Trade-off" concept.
-         5. Algebra Section: Step-by-step visual slide deck showing the "Onion" reduction strategy.
-         6. Quiz Section: 15-question interactive assessment with rationales.
-         Why this structure? It moves from concrete definitions -> dynamic behavior -> abstract math -> self-assessment, following a natural learning progression.
-    -->
-    <!-- Visualization & Content Choices:
-         - Charts: Chart.js for the Step Response. Goal: Visualize 'Transient Response'. Interaction: Sliders change graph shape instantly. Justification: Best way to understand 'Damping Trade-off'.
-         - Diagrams: CSS/Flexbox Block Diagrams. Goal: Visualize 'System Anatomy' and 'Reduction'. Interaction: Hover/Click for info. Justification: clearer than static images, no SVG required.
-         - Quiz: Interactive Form. Goal: Assess retention. Interaction: Immediate feedback loops.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 </head>
 <body class="bg-stone-50 text-stone-800 font-sans leading-relaxed">
 
-    <!-- Main App Container -->
     <div id="app" class="min-h-screen flex flex-col max-w-6xl mx-auto shadow-xl bg-white">
         
-        <!-- Header -->
         <header class="bg-stone-800 text-stone-100 p-6 md:p-8 rounded-t-lg">
             <h1 class="text-3xl md:text-4xl font-bold mb-2 text-orange-100">Feedback Control Systems</h1>
-            <p class="text-stone-300 max-w-3xl">An interactive guide to closed-loop anatomy, transient response characteristics, and block diagram algebra.</p>
+            <p class="text-stone-300 max-w-3xl">Interactive guide to closed-loop anatomy, transient response, and block diagram algebra.</p>
         </header>
 
-        <!-- Navigation -->
         <nav class="bg-stone-100 border-b border-stone-200 sticky top-0 z-20">
             <div class="flex flex-wrap justify-center md:justify-start">
-                <button onclick="switchTab('anatomy')" id="tab-anatomy" class="tab-btn px-6 py-4 font-semibold text-stone-600 hover:bg-white hover:text-orange-600 transition-colors border-b-2 border-transparent focus:outline-none flex items-center gap-2">
-                    <span>?? System Anatomy</span>
+                <button onclick="switchTab('anatomy')" id="tab-anatomy" class="tab-btn px-6 py-4 font-semibold text-stone-600 hover:bg-white hover:text-orange-600 border-b-2 border-transparent focus:outline-none flex items-center gap-2">
+                    <span>⚙️ System Anatomy</span>
                 </button>
-                <button onclick="switchTab('simulator')" id="tab-simulator" class="tab-btn px-6 py-4 font-semibold text-stone-600 hover:bg-white hover:text-blue-600 transition-colors border-b-2 border-transparent focus:outline-none flex items-center gap-2">
-                    <span>?? Response Simulator</span>
+                <button onclick="switchTab('simulator')" id="tab-simulator" class="tab-btn px-6 py-4 font-semibold text-stone-600 hover:bg-white hover:text-blue-600 border-b-2 border-transparent focus:outline-none flex items-center gap-2">
+                    <span>📈 Response Simulator</span>
                 </button>
-                <button onclick="switchTab('algebra')" id="tab-algebra" class="tab-btn px-6 py-4 font-semibold text-stone-600 hover:bg-white hover:text-green-600 transition-colors border-b-2 border-transparent focus:outline-none flex items-center gap-2">
-                    <span>?? Reduction Logic</span>
-                </button>
-                <button onclick="switchTab('quiz')" id="tab-quiz" class="tab-btn px-6 py-4 font-semibold text-stone-600 hover:bg-white hover:text-purple-600 transition-colors border-b-2 border-transparent focus:outline-none flex items-center gap-2">
-                    <span>?? Knowledge Check</span>
-                </button>
-            </div>
-        </nav>
-
-        <!-- Main Content Area -->
-        <main class="flex-grow p-4 md:p-8 bg-white min-h-[600px]">
-
-            <!-- Section 1: Anatomy -->
-            <section id="content-anatomy" class="tab-content block animate-fade-in">
-                <div class="max-w-4xl mx-auto">
-                    <div class="mb-8 p-4 bg-orange-50 border-l-4 border-orange-400 rounded-r shadow-sm">
-                        <h2 class="text-xl font-bold text-orange-800 mb-2">The Loop Architecture</h2>
-                        <p class="text-stone-700">Explore the fundamental components of a feedback loop. Click on any block in the diagram below to understand its specific role in maintaining system stability and performance.</p>
-                    </div>
-
-                    <!-- Interactive Block Diagram Area -->
-                    <div class="bg-stone-100 p-8 rounded-xl shadow-inner mb-8 overflow-x-auto">
-                        <div class="flex flex-col items-center min-w-[600px]">
-                            <!-- Top Row: Forward Path -->
-                            <div class="flex items-center w-full justify-between gap-2">
-                                <div class="text-center">
-                                    <div class="text-sm font-bold text-stone-500 mb-1">Reference (R)</div>
-                                    <div class="text-2xl">??</div>
-                                </div>
-                                <div class="connector-h"></div>
-                                
-                                <!-- Summing Point -->
-                                <div onclick="showDef('summing')" class="cursor-pointer bg-white border-2 border-stone-800 rounded-full w-12 h-12 flex items-center justify-center font-bold text-xl hover:bg-orange-100 hover:scale-110 transition-transform shadow-md">
-                                    &Sigma;
-                                </div>
-                                
-                                <div class="connector-h relative group">
-                                    <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-mono text-red-600 font-bold opacity-0 group-hover:opacity-100 transition-opacity">Error (E)</span>
-                                </div>
-
-                                <!-- Controller -->
-                                <div onclick="showDef('controller')" class="cursor-pointer bg-green-100 border-2 border-green-600 rounded px-6 py-4 font-bold text-green-900 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all text-center w-32">
-                                    Controller<br><span class="text-xs font-normal">Brain Gc(s)</span>
-                                </div>
-
-                                <div class="connector-h relative group">
-                                     <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-mono text-green-600 font-bold opacity-0 group-hover:opacity-100 transition-opacity">Actuating (U)</span>
-                                </div>
-
-                                <!-- Plant -->
-                                <div onclick="showDef('plant')" class="cursor-pointer bg-blue-100 border-2 border-blue-600 rounded px-6 py-4 font-bold text-blue-900 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all text-center w-32">
-                                    Plant<br><span class="text-xs font-normal">Body Gp(s)</span>
-                                </div>
-
-                                <div class="connector-h"></div>
-                                <div class="text-center">
-                                    <div class="text-sm font-bold text-stone-500 mb-1">Output (C)</div>
-                                    <div class="text-2xl">??</div>
-                                </div>
-                            </div>
-
-                            <!-- Feedback Path Visuals -->
-                            <div class="w-full h-16 border-r-2 border-stone-400 relative mr-[4.5rem]"></div> <!-- Dropdown line -->
-                            <div class="flex items-center w-full justify-center pl-24 relative -top-[2px]">
-                                <div class="w-16 border-t-2 border-stone-400 h-10 border-l-2 rounded-bl-xl absolute left-[9.5rem] -top-[1px]"></div>
-                                
-                                <!-- Feedback Element -->
-                                <div onclick="showDef('sensor')" class="cursor-pointer bg-orange-100 border-2 border-orange-500 rounded px-6 py-3 font-bold text-orange-900 shadow-md hover:shadow-lg transition-all text-center w-40 z-10">
-                                    Feedback / Sensor<br><span class="text-xs font-normal">H(s)</span>
-                                </div>
-                                
-                                <div class="flex-grow border-t-2 border-stone-400 relative">
-                                    <div class="absolute right-0 -top-[6px] w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[8px] border-r-stone-400"></div> <!-- Left arrow hack -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Definition Card -->
-                    <div id="def-card" class="bg-white border border-stone-200 rounded-lg p-6 shadow-lg min-h-[150px] transition-all duration-300 transform">
-                        <h3 id="def-title" class="text-xl font-bold text-stone-800 mb-2">Select a component above</h3>
-                        <p id="def-content" class="text-stone-600">Hover or click on the Controller, Plant, Sensor, or Summing Point to learn more about its function in the feedback loop.</p>
-                        <div id="def-math" class="mt-3 p-2 bg-stone-50 rounded font-mono text-sm text-stone-500 hidden"></div>
-                    </div>
-
-                    <!-- Transfer Function Formula -->
-                    <div class="mt-8 p-6 bg-stone-800 text-stone-100 rounded-lg text-center">
-                        <p class="mb-2 text-stone-400 text-sm uppercase tracking-wide">The Golden Rule: Closed-Loop Transfer Function</p>
-                        <div class="text-2xl md:text-3xl font-mono font-bold tracking-wider">
-                            T(s) = <span class="inline-block align-middle text-center"><span class="block border-b border-stone-400 pb-1">G(s)</span><span class="block pt-1 text-lg">1 + G(s)H(s)</span></span>
-                        </div>
-                        <p class="mt-4 text-sm text-stone-400 italic">Numerator is Forward Path. Denominator is 1 + Loop Gain (for negative feedback).</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Section 2: Simulator -->
-            <section id="content-simulator" class="tab-content hidden animate-fade-in">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <!-- Controls -->
-                    <div class="lg:col-span-1 space-y-6">
-                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded shadow-sm">
-                            <h2 class="text-lg font-bold text-blue-900 mb-2">Step Response Lab</h2>
-                            <p class="text-sm text-blue-800">Adjust the damping ratio ($\zeta$) and natural frequency ($\omega_n$) to see how the system reacts to a sudden command.</p>
-                        </div>
-
-                        <div class="bg-white p-6 rounded-lg shadow border border-stone-200">
-                            <label class="block mb-4">
-                                <span class="text-stone-700 font-bold flex justify-between">
-                                    Damping Ratio ($\zeta$)
-                                    <span id="val-zeta" class="text-blue-600">0.4</span>
-                                </span>
-                                <input type="range" id="input-zeta" min="0.1" max="1.5" step="0.1" value="0.4" class="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer mt-2 accent-blue-600">
-                                <span class="text-xs text-stone-500 mt-1 block">Controls Stability vs. Oscillation</span>
-                            </label>
-
-                            <label class="block mb-2">
-                                <span class="text-stone-700 font-bold flex justify-between">
-                                    Natural Frequency ($\omega_n$)
-                                    <span id="val-wn" class="text-blue-600">1.0</span>
-                                </span>
-                                <input type="range" id="input-wn" min="0.5" max="3.0" step="0.1" value="1.0" class="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer mt-2 accent-blue-600">
-                                <span class="text-xs text-stone-500 mt-1 block">Controls Response Speed</span>
-                            </label>
-                        </div>
-
-                        <!-- Real-time Metrics -->
-                        <div class="bg-stone-800 text-stone-100 p-6 rounded-lg shadow">
-                            <h3 class="font-bold text-stone-300 border-b border-stone-600 pb-2 mb-3">Performance Metrics</h3>
-                            <div class="space-y-3 font-mono text-sm">
-                                <div class="flex justify-between">
-                                    <span>Rise Time ($t_r$):</span>
-                                    <span id="metric-tr" class="text-green-400">Loading...</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Peak Overshoot ($M_p$):</span>
-                                    <span id="metric-os" class="text-orange-400">Loading...</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Settling Time ($t_s$):</span>
-                                    <span id="metric-ts" class="text-blue-400">Loading...</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Condition:</span>
-                                    <span id="metric-cond" class="text-stone-100 font-bold">Underdamped</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Visualization -->
-                    <div class="lg:col-span-2">
-                        <div class="bg-white p-4 rounded-lg shadow-lg border border-stone-200">
-                            <h3 class="text-center font-bold text-stone-600 mb-2">System Step Response y(t)</h3>
-                            <!-- Chart Container -->
-                            <div class="chart-container">
-                                <canvas id="responseChart"></canvas>
-                            </div>
-                            <div class="mt-4 text-center text-sm text-stone-500">
-                                <span class="inline-block w-3 h-3 bg-red-500 rounded-full mr-1"></span> Target (Step Input)
-                                <span class="inline-block w-3 h-3 bg-blue-600 rounded-full ml-4 mr-1"></span> Actual Output
-                            </div>
-                        </div>
-
-                        <!-- Analysis Text -->
-                        <div id="analysis-text" class="mt-6 p-4 bg-stone-100 rounded border border-stone-300 text-stone-700 italic text-sm">
-                            Calculating...
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Section 3: Algebra -->
-            <section id="content-algebra" class="tab-content hidden animate-fade-in">
-                <div class="max-w-4xl mx-auto">
-                    <div class="mb-8 p-4 bg-green-50 border-l-4 border-green-500 rounded-r shadow-sm">
-                        <h2 class="text-xl font-bold text-green-800 mb-2">Block Diagram Reduction: The "Onion" Strategy</h2>
-                        <p class="text-stone-700">Complex systems are often just nested loops. The strategy is to simplify from the <strong>inside out</strong>, reducing the innermost loops first.</p>
-                    </div>
-
-                    <!-- Slide Viewer -->
-                    <div class="bg-white border-2 border-stone-200 rounded-xl overflow-hidden shadow-lg min-h-[400px] flex flex-col relative">
-                        
-                        <!-- Slide Content -->
-                        <div id="slide-container" class="flex-grow p-8 flex items-center justify-center bg-stone-50">
-                            <!-- Dynamic Content Injected Here -->
-                            <div class="text-center">
-                                <h3 class="text-2xl font-bold text-stone-400">Loading Visualization...</h3>
-                            </div>
-                        </div>
-
-                        <!-- Controls -->
-                        <div class="bg-stone-100 p-4 border-t border-stone-200 flex justify-between items-center">
-                            <button onclick="prevSlide()" class="px-4 py-2 bg-white border border-stone-300 rounded hover:bg-stone-200 text-stone-600 font-bold shadow-sm transition-colors">? Previous</button>
-                            <span id="slide-indicator" class="font-mono font-bold text-stone-500">Step 1 of 4</span>
-                            <button onclick="nextSlide()" class="px-4 py-2 bg-green-600 border border-green-700 rounded hover:bg-green-700 text-white font-bold shadow-sm transition-colors">Next ?</button>
-                        </div>
-                    </div>
-
-                    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="p-4 bg-stone-100 rounded-lg">
-                            <h4 class="font-bold text-stone-700 mb-2">Series Blocks Rule</h4>
-                            <div class="flex items-center justify-center text-sm font-mono bg-white p-2 rounded border border-stone-300">
-                                [G1] ? [G2] &nbsp;=&nbsp; [G1·G2]
-                            </div>
-                        </div>
-                        <div class="p-4 bg-stone-100 rounded-lg">
-                            <h4 class="font-bold text-stone-700 mb-2">Pickoff Point Rule</h4>
-                            <div class="text-xs text-stone-600">
-                                Moving pickoff <em>after</em> block G? <br>
-                                Divide feedback path by G (multiply by 1/G).
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Section 4: Quiz -->
-            <section id="content-quiz" class="tab-content hidden animate-fade-in">
-                <div class="max-w-3xl mx-auto">
-                    <div class="text-center mb-8">
-                        <h2 class="text-2xl font-bold text-purple-900">Knowledge Check</h2>
-                        <p class="text-stone-600">Test your understanding of the principles of feedback control. 15 questions.</p>
-                        <div class="mt-4 inline-block bg-purple-100 text-purple-800 px-4 py-2 rounded-full font-bold">
-                            Score: <span id="quiz-score">0</span> / 15
-                        </div>
-                    </div>
-
-                    <!-- Quiz Container -->
-                    <div id="quiz-container" class="space-y-6">
-                        <!-- Questions injected via JS -->
-                    </div>
-
-                    <div class="mt-8 text-center">
-                        <button onclick="resetQuiz()" class="text-stone-500 hover:text-stone-800 underline text-sm">Reset Quiz</button>
-                    </div>
-                </div>
-            </section>
-
-        </main>
-
-        <!-- Footer -->
-        <footer class="bg-stone-800 text-stone-400 p-6 text-center text-sm border-t border-stone-700">
-            <p>Based on "Study Guide: Principles of Feedback Control" and Course Quiz Material.</p>
-        </footer>
-
-    </div>
-
-    <!-- JavaScript Logic -->
-    <script>
-        // --- State Management ---
-        const state = {
-            activeTab: 'anatomy',
-            simulation: { zeta: 0.4, wn: 1.0 },
-            quizAnswers: {},
-            slideIndex: 0
-        };
-
-        // --- Data: Definitions ---
-        const definitions = {
-            'summing': {
-                title: 'Summing Point (Comparator)',
-                content: 'The "Decision Center". It compares the desired Setpoint (R) with the Actual Output (Sensor Data). It calculates the Error Signal (E = R - B).',
-                math: 'E(s) = R(s) - H(s)C(s)'
-            },
-            'controller': {
-                title: 'Controller (Gc)',
-                content: 'The "Brain". It takes the error signal and applies logic (like PID) to decide how much corrective action to take. It generates the Actuating Signal (U).',
-                math: 'U(s) = Gc(s) * E(s)'
-            },
-            'plant': {
-                title: 'Plant / Process (Gp)',
-                content: 'The "Body". This is the physical system being controlled (e.g., a motor, heater, or robot arm). It reacts to the controller input to change the output.',
-                math: 'C(s) = Gp(s) * U(s)'
-            },
-            'sensor': {
-                title: 'Feedback Element (H)',
-                content: 'The "Senses". It measures the physical output and converts it into a signal that can be compared to the reference. In Unity Feedback, H(s) = 1.',
-                math: 'B(s) = H(s) * C(s)'
-            }
-        };
-
-        // --- Data: Algebra Slides ---
-        const slides = [
-            {
-                title: "Scenario: Nested Loops",
-                html: `
-                    <div class="flex flex-col items-center">
-                        <div class="text-sm font-bold text-stone-500 mb-4">Original Complex System</div>
-                        <div class="flex items-center gap-2 p-4 border border-stone-300 rounded bg-white">
-                            <span class="text-2xl">R ?</span>
-                            <div class="w-8 h-8 rounded-full border border-black flex items-center justify-center">&Sigma;</div>
-                            <div class="p-2 border border-blue-600 bg-blue-50">G1</div>
-                            <!-- Inner Loop Box -->
-                            <div class="p-4 border-2 border-dashed border-red-400 bg-red-50 rounded flex items-center gap-2 relative">
-                                <span class="absolute -top-3 bg-red-100 px-1 text-xs text-red-600 font-bold">Inner Loop</span>
-                                <div class="w-8 h-8 rounded-full border border-black flex items-center justify-center bg-white">&Sigma;</div>
-                                <div class="p-2 border border-green-600 bg-green-100">G2</div>
-                                <div class="h-1 w-4 bg-stone-800"></div>
-                            </div>
-                            <span class="text-2xl">? C</span>
-                        </div>
-                        <div class="mt-4 text-stone-600 text-sm max-w-md text-center">We have an inner feedback loop (G2) inside an outer loop. We must start from the inside.</div>
-                    </div>
-                `
-            },
-            {
-                title: "Step 1: Reduce Inner Loop",
-                html: `
-                    <div class="flex flex-col items-center">
-                        <div class="text-sm font-bold text-stone-500 mb-4">Applying the "Golden Rule" to Inner Loop</div>
-                        <div class="flex items-center gap-2 p-4 border border-stone-300 rounded bg-white">
-                            <span class="text-2xl">R ?</span>
-                            <div class="w-8 h-8 rounded-full border border-black flex items-center justify-center">&Sigma;</div>
-                            <div class="p-2 border border-blue-600 bg-blue-50 opacity-50">G1</div>
-                            
-                            <!-- Reduced Block -->
-                            <div class="p-3 border-2 border-green-600 bg-green-100 rounded shadow-lg transform scale-110 transition-transform">
-                                <span class="font-mono font-bold">G2 / (1+G2H1)</span>
-                            </div>
-                            
-                            <span class="text-2xl">? C</span>
-                        </div>
-                        <div class="mt-4 text-stone-600 text-sm max-w-md text-center">The inner loop is replaced by a single equivalent block using T = G/(1+GH).</div>
-                    </div>
-                `
-            },
-            {
-                title: "Step 2: Combine Series Blocks",
-                html: `
-                    <div class="flex flex-col items-center">
-                        <div class="text-sm font-bold text-stone-500 mb-4">Multiply Cascade Blocks</div>
-                        <div class="flex items-center gap-2 p-4 border border-stone-300 rounded bg-white">
-                            <span class="text-2xl">R ?</span>
-                            <div class="w-8 h-8 rounded-full border border-black flex items-center justify-center">&Sigma;</div>
-                            
-                            <!-- Combined Block -->
-                            <div class="p-4 border-2 border-purple-600 bg-purple-100 rounded shadow-lg">
-                                <span class="font-mono font-bold">G1 · [G2/(1+G2H1)]</span>
-                            </div>
-                            
-                            <span class="text-2xl">? C</span>
-                        </div>
-                        <div class="mt-4 text-stone-600 text-sm max-w-md text-center">G1 is in series with the new inner block, so we multiply them
+                <button onclick="
