@@ -61,4 +61,452 @@
                 <button onclick="switchTab('simulator')" id="tab-simulator" class="tab-btn px-6 py-4 font-semibold text-stone-600 hover:bg-white hover:text-blue-600 border-b-2 border-transparent focus:outline-none flex items-center gap-2">
                     <span>📈 Response Simulator</span>
                 </button>
-                <button onclick="
+                <button onclick="switchTab('algebra')" id="tab-algebra" class="tab-btn px-6 py-4 font-semibold text-stone-600 hover:bg-white hover:text-green-600 border-b-2 border-transparent focus:outline-none flex items-center gap-2">
+                    <span>🧅 Reduction Logic</span>
+                </button>
+                <button onclick="switchTab('quiz')" id="tab-quiz" class="tab-btn px-6 py-4 font-semibold text-stone-600 hover:bg-white hover:text-purple-600 border-b-2 border-transparent focus:outline-none flex items-center gap-2">
+                    <span>📝 Knowledge Check</span>
+                </button>
+            </div>
+        </nav>
+
+        <main class="flex-grow p-4 md:p-8 bg-white min-h-[600px]">
+
+            <section id="content-anatomy" class="tab-content animate-fade-in">
+                <div class="max-w-4xl mx-auto">
+                    <div class="mb-8 p-4 bg-orange-50 border-l-4 border-orange-400 rounded-r shadow-sm">
+                        <h2 class="text-xl font-bold text-orange-800 mb-2">The Loop Architecture</h2>
+                        <p class="text-stone-700">Click on any block in the diagram below to understand its role.</p>
+                    </div>
+
+                    <div class="bg-stone-100 p-8 rounded-xl shadow-inner mb-8 overflow-x-auto">
+                        <div class="flex flex-col items-center min-w-[600px]">
+                            <div class="flex items-center w-full justify-between gap-2">
+                                <div class="text-center">
+                                    <div class="text-sm font-bold text-stone-500 mb-1">Reference (R)</div>
+                                    <div class="text-2xl">🎯</div>
+                                </div>
+                                <div class="connector-h"></div>
+                                
+                                <div onclick="showDef('summing')" class="cursor-pointer bg-white border-2 border-stone-800 rounded-full w-12 h-12 flex items-center justify-center font-bold text-xl hover:bg-orange-100 hover:scale-110 transition-transform shadow-md">Σ</div>
+                                
+                                <div class="connector-h relative group">
+                                    <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-mono text-red-600 font-bold opacity-0 group-hover:opacity-100 transition-opacity">Error (E)</span>
+                                </div>
+
+                                <div onclick="showDef('controller')" class="cursor-pointer bg-green-100 border-2 border-green-600 rounded px-6 py-4 font-bold text-green-900 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all text-center w-32">
+                                    Controller<br><span class="text-xs font-normal">Gc(s)</span>
+                                </div>
+
+                                <div class="connector-h relative group">
+                                     <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-mono text-green-600 font-bold opacity-0 group-hover:opacity-100 transition-opacity">Input (U)</span>
+                                </div>
+
+                                <div onclick="showDef('plant')" class="cursor-pointer bg-blue-100 border-2 border-blue-600 rounded px-6 py-4 font-bold text-blue-900 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all text-center w-32">
+                                    Plant<br><span class="text-xs font-normal">Gp(s)</span>
+                                </div>
+
+                                <div class="connector-h"></div>
+                                <div class="text-center">
+                                    <div class="text-sm font-bold text-stone-500 mb-1">Output (C)</div>
+                                    <div class="text-2xl">⚡</div>
+                                </div>
+                            </div>
+
+                            <div class="w-full h-16 border-r-2 border-stone-400 relative mr-[4.5rem]"></div>
+                            <div class="flex items-center w-full justify-center pl-24 relative -top-[2px]">
+                                <div class="w-16 border-t-2 border-stone-400 h-10 border-l-2 rounded-bl-xl absolute left-[9.5rem] -top-[1px]"></div>
+                                
+                                <div onclick="showDef('sensor')" class="cursor-pointer bg-orange-100 border-2 border-orange-500 rounded px-6 py-3 font-bold text-orange-900 shadow-md hover:shadow-lg transition-all text-center w-40 z-10">
+                                    Sensor / Feedback<br><span class="text-xs font-normal">H(s)</span>
+                                </div>
+                                
+                                <div class="flex-grow border-t-2 border-stone-400 relative">
+                                    <div class="absolute right-0 -top-[6px] w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[8px] border-r-stone-400"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="def-card" class="bg-white border border-stone-200 rounded-lg p-6 shadow-lg min-h-[150px] transition-all duration-300">
+                        <h3 id="def-title" class="text-xl font-bold text-stone-800 mb-2">Select a component above</h3>
+                        <p id="def-content" class="text-stone-600">Hover or click on the diagrams to learn their function.</p>
+                        <div id="def-math" class="mt-3 p-2 bg-stone-50 rounded font-mono text-sm text-stone-500 hidden"></div>
+                    </div>
+
+                    <div class="mt-8 p-6 bg-stone-800 text-stone-100 rounded-lg text-center">
+                        <p class="mb-2 text-stone-400 text-sm uppercase tracking-wide">The Golden Rule: Closed-Loop Transfer Function</p>
+                        <div class="text-2xl md:text-3xl font-mono font-bold tracking-wider">
+                            T(s) = <span class="inline-block align-middle text-center"><span class="block border-b border-stone-400 pb-1">G(s)</span><span class="block pt-1 text-lg">1 + G(s)H(s)</span></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="content-simulator" class="tab-content hidden animate-fade-in">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded shadow-sm">
+                            <h2 class="text-lg font-bold text-blue-900 mb-2">Step Response Lab</h2>
+                            <p class="text-sm text-blue-800">Adjust the damping ratio ($\zeta$) and natural frequency ($\omega_n$).</p>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-lg shadow border border-stone-200">
+                            <label class="block mb-4">
+                                <span class="text-stone-700 font-bold flex justify-between">
+                                    Damping Ratio ($\zeta$)
+                                    <span id="val-zeta" class="text-blue-600">0.4</span>
+                                </span>
+                                <input type="range" id="input-zeta" min="0.1" max="1.5" step="0.1" value="0.4" class="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer mt-2 accent-blue-600">
+                                <span class="text-xs text-stone-500 mt-1 block">Controls Stability vs. Oscillation</span>
+                            </label>
+
+                            <label class="block mb-2">
+                                <span class="text-stone-700 font-bold flex justify-between">
+                                    Natural Freq ($\omega_n$)
+                                    <span id="val-wn" class="text-blue-600">1.0</span>
+                                </span>
+                                <input type="range" id="input-wn" min="0.5" max="3.0" step="0.1" value="1.0" class="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer mt-2 accent-blue-600">
+                                <span class="text-xs text-stone-500 mt-1 block">Controls Response Speed</span>
+                            </label>
+                        </div>
+
+                        <div class="bg-stone-800 text-stone-100 p-6 rounded-lg shadow">
+                            <h3 class="font-bold text-stone-300 border-b border-stone-600 pb-2 mb-3">Metrics</h3>
+                            <div class="space-y-3 font-mono text-sm">
+                                <div class="flex justify-between">
+                                    <span>Rise Time ($t_r$):</span><span id="metric-tr" class="text-green-400">--</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Peak Overshoot ($M_p$):</span><span id="metric-os" class="text-orange-400">--</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Settling Time ($t_s$):</span><span id="metric-ts" class="text-blue-400">--</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Condition:</span><span id="metric-cond" class="text-stone-100 font-bold">Underdamped</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-2">
+                        <div class="bg-white p-4 rounded-lg shadow-lg border border-stone-200">
+                            <h3 class="text-center font-bold text-stone-600 mb-2">Step Response y(t)</h3>
+                            <div class="chart-container">
+                                <canvas id="responseChart"></canvas>
+                            </div>
+                            <div class="mt-4 text-center text-sm text-stone-500">
+                                <span class="inline-block w-3 h-3 bg-red-500 rounded-full mr-1"></span> Target
+                                <span class="inline-block w-3 h-3 bg-blue-600 rounded-full ml-4 mr-1"></span> Actual
+                            </div>
+                        </div>
+                        <div id="analysis-text" class="mt-6 p-4 bg-stone-100 rounded border border-stone-300 text-stone-700 italic text-sm">
+                            System is reacting...
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="content-algebra" class="tab-content hidden animate-fade-in">
+                <div class="max-w-4xl mx-auto">
+                    <div class="mb-8 p-4 bg-green-50 border-l-4 border-green-500 rounded-r shadow-sm">
+                        <h2 class="text-xl font-bold text-green-800 mb-2">Block Diagram Reduction</h2>
+                        <p class="text-stone-700">Strategy: Simplify from the <strong>inside out</strong>.</p>
+                    </div>
+
+                    <div class="bg-white border-2 border-stone-200 rounded-xl overflow-hidden shadow-lg min-h-[400px] flex flex-col relative">
+                        <div id="slide-container" class="flex-grow p-8 flex items-center justify-center bg-stone-50">
+                            </div>
+                        <div class="bg-stone-100 p-4 border-t border-stone-200 flex justify-between items-center">
+                            <button onclick="prevSlide()" class="px-4 py-2 bg-white border border-stone-300 rounded hover:bg-stone-200 text-stone-600 font-bold shadow-sm">← Previous</button>
+                            <span id="slide-indicator" class="font-mono font-bold text-stone-500">Step 1 of 4</span>
+                            <button onclick="nextSlide()" class="px-4 py-2 bg-green-600 border border-green-700 rounded hover:bg-green-700 text-white font-bold shadow-sm">Next →</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="content-quiz" class="tab-content hidden animate-fade-in">
+                <div class="max-w-3xl mx-auto">
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-bold text-purple-900">Knowledge Check</h2>
+                        <div class="mt-4 inline-block bg-purple-100 text-purple-800 px-4 py-2 rounded-full font-bold">
+                            Score: <span id="quiz-score">0</span> / 15
+                        </div>
+                    </div>
+                    <div id="quiz-container" class="space-y-6"></div>
+                    <div class="mt-8 text-center">
+                        <button onclick="resetQuiz()" class="text-stone-500 hover:text-stone-800 underline text-sm">Reset Quiz</button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        // --- DATA & STATE ---
+        const state = {
+            activeTab: 'anatomy',
+            simulation: { zeta: 0.4, wn: 1.0 },
+            slideIndex: 0,
+            score: 0
+        };
+
+        const definitions = {
+            'summing': { title: 'Summing Point', content: 'Compares Reference (R) vs Output (C). Calculates Error (E).', math: 'E(s) = R(s) - B(s)' },
+            'controller': { title: 'Controller (Gc)', content: 'The Brain. Decides corrective action based on Error.', math: 'U(s) = Gc(s)E(s)' },
+            'plant': { title: 'Plant (Gp)', content: 'The Body. The physical system being controlled.', math: 'C(s) = Gp(s)U(s)' },
+            'sensor': { title: 'Sensor (H)', content: 'Feedback. Measures output to close the loop.', math: 'B(s) = H(s)C(s)' }
+        };
+
+        const slides = [
+            {
+                title: "Scenario: Nested Loops",
+                html: `<div class="flex flex-col items-center"><div class="text-sm font-bold text-stone-500 mb-4">Complex System</div>
+                <div class="flex items-center gap-2 p-4 border border-stone-300 rounded bg-white">
+                    <span class="text-xl">R→</span><div class="w-8 h-8 rounded-full border border-black flex items-center justify-center">Σ</div>
+                    <div class="p-2 border border-blue-600 bg-blue-50">G1</div>
+                    <div class="p-4 border-2 border-dashed border-red-400 bg-red-50 rounded flex items-center gap-2 relative">
+                        <span class="absolute -top-3 bg-red-100 px-1 text-xs text-red-600 font-bold">Inner Loop</span>
+                        <div class="w-8 h-8 rounded-full border border-black flex items-center justify-center bg-white">Σ</div>
+                        <div class="p-2 border border-green-600 bg-green-100">G2</div>
+                    </div><span class="text-xl">→C</span>
+                </div></div>`
+            },
+            {
+                title: "Step 1: Reduce Inner Loop",
+                html: `<div class="flex flex-col items-center"><div class="text-sm font-bold text-stone-500 mb-4">Golden Rule</div>
+                <div class="flex items-center gap-2 p-4 border border-stone-300 rounded bg-white">
+                    <span class="text-xl">R→</span><div class="w-8 h-8 rounded-full border border-black flex items-center justify-center">Σ</div>
+                    <div class="p-2 border border-blue-600 bg-blue-50 opacity-50">G1</div>
+                    <div class="p-3 border-2 border-green-600 bg-green-100 rounded shadow-lg transform scale-110">
+                        <span class="font-mono font-bold">G2 / (1+G2H)</span>
+                    </div><span class="text-xl">→C</span>
+                </div></div>`
+            },
+            {
+                title: "Step 2: Combine Series",
+                html: `<div class="flex flex-col items-center"><div class="text-sm font-bold text-stone-500 mb-4">Multiply Cascade Blocks</div>
+                <div class="flex items-center gap-2 p-4 border border-stone-300 rounded bg-white">
+                    <span class="text-xl">R→</span><div class="w-8 h-8 rounded-full border border-black flex items-center justify-center">Σ</div>
+                    <div class="p-4 border-2 border-purple-600 bg-purple-100 rounded shadow-lg">
+                        <span class="font-mono font-bold">G1 · [G2/(1+G2H)]</span>
+                    </div><span class="text-xl">→C</span>
+                </div></div>`
+            },
+            {
+                title: "Step 3: Final Loop",
+                html: `<div class="flex flex-col items-center"><div class="text-sm font-bold text-stone-500 mb-4">Final Reduction</div>
+                <div class="p-6 border-4 border-stone-800 bg-stone-100 rounded-xl shadow-2xl">
+                    <div class="font-mono text-xl font-bold">T(s) = <span class="inline-block text-center align-middle"><span class="block border-b border-black">G1·G2</span><span class="block">1 + G1·G2·H + G1·G2</span></span></div>
+                </div></div>`
+            }
+        ];
+
+        const quizQuestions = [
+            { q: "What is the primary benefit of closed-loop over open-loop?", a: ["Higher Cost", "Reduced Sensitivity to Disturbances", "Increased Gain", "No Sensor Required"], correct: 1 },
+            { q: "In the transfer function T(s) = G/(1+GH), what is GH?", a: ["Forward Path", "Loop Gain", "Error Signal", "Output"], correct: 1 },
+            { q: "If Zeta (damping) is 0, the system is:", a: ["Overdamped", "Critically Damped", "Undamped (Oscillatory)", "Stable"], correct: 2 },
+            { q: "Which component compares the reference to the output?", a: ["Plant", "Sensor", "Controller", "Summing Point"], correct: 3 },
+            { q: "What happens to Rise Time if natural frequency (Wn) increases?", a: ["Decreases (Faster)", "Increases (Slower)", "Stays same", "Becomes Infinite"], correct: 0 },
+            { q: "For a stable system, poles must be located in:", a: ["Right Half Plane", "Left Half Plane", "On Imaginary Axis", "At Origin"], correct: 1 },
+            { q: "Overshoot is primarily controlled by:", a: ["Natural Frequency", "Damping Ratio", "DC Gain", "Input Amplitude"], correct: 1 },
+            { q: "Steady state error is the difference between:", a: ["Input and Output", "Plant and Controller", "Output and Feedback", "Time and Frequency"], correct: 0 },
+            { q: "A PID controller term 'I' stands for:", a: ["Input", "Integral", "Imaginary", "Inverse"], correct: 1 },
+            { q: "Integral action is used to eliminate:", a: ["Overshoot", "Rise Time", "Steady State Error", "Noise"], correct: 2 },
+            { q: "What is the feedback element usually called?", a: ["Plant", "Actuator", "Sensor", "Reference"], correct: 2 },
+            { q: "Critically damped corresponds to Zeta = ?", a: ["0", "0.5", "1.0", "2.0"], correct: 2 },
+            { q: "Which plot is used to analyze frequency response?", a: ["Root Locus", "Bode Plot", "Step Response", "Ramp Response"], correct: 1 },
+            { q: "The 'Plant' represents:", a: ["The mathematics", "The computer", "The physical system", "The user"], correct: 2 },
+            { q: "Negative feedback implies the signal is:", a: ["Added", "Subtracted", "Multiplied", "Divided"], correct: 1 }
+        ];
+
+        // --- CHART SETUP ---
+        let chartInstance = null;
+        function initChart() {
+            const ctx = document.getElementById('responseChart').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        { label: 'Input (Step)', data: [], borderColor: 'red', borderDash: [5, 5], borderWidth: 2, pointRadius: 0 },
+                        { label: 'Output y(t)', data: [], borderColor: '#2563eb', borderWidth: 3, pointRadius: 0, fill: false }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: { duration: 0 },
+                    scales: {
+                        x: { title: { display: true, text: 'Time (s)' }, min: 0, max: 10 },
+                        y: { title: { display: true, text: 'Amplitude' }, min: 0, max: 2 }
+                    }
+                }
+            });
+            updateSimulation();
+        }
+
+        // --- LOGIC: SIMULATION ---
+        function updateSimulation() {
+            const zeta = parseFloat(document.getElementById('input-zeta').value);
+            const wn = parseFloat(document.getElementById('input-wn').value);
+            
+            document.getElementById('val-zeta').textContent = zeta;
+            document.getElementById('val-wn').textContent = wn;
+
+            // Generate Data
+            const tMax = 10;
+            const steps = 200;
+            const timeData = [];
+            const inputData = [];
+            const outputData = [];
+
+            for (let i = 0; i <= steps; i++) {
+                const t = (i / steps) * tMax;
+                timeData.push(t.toFixed(2));
+                inputData.push(1); // Unit step
+
+                let y = 0;
+                // Standard 2nd Order Step Response Math
+                if (zeta < 1.0) { // Underdamped
+                    const wd = wn * Math.sqrt(1 - zeta*zeta);
+                    const phi = Math.acos(zeta);
+                    y = 1 - (Math.exp(-zeta * wn * t) / Math.sqrt(1 - zeta*zeta)) * Math.sin(wd * t + phi);
+                } else if (zeta === 1.0) { // Critically Damped
+                    y = 1 - Math.exp(-wn * t) * (1 + wn * t);
+                } else { // Overdamped
+                    const p1 = -zeta*wn + wn*Math.sqrt(zeta*zeta - 1);
+                    const p2 = -zeta*wn - wn*Math.sqrt(zeta*zeta - 1);
+                    y = 1 + (p2 * Math.exp(p1*t) - p1 * Math.exp(p2*t)) / (p1 - p2);
+                }
+                outputData.push(y);
+            }
+
+            // Update Chart
+            chartInstance.data.labels = timeData;
+            chartInstance.data.datasets[0].data = inputData;
+            chartInstance.data.datasets[1].data = outputData;
+            chartInstance.update();
+
+            // Calc Metrics
+            // Rise Time (approx for underdamped): (0.8 + 2.5*zeta)/wn
+            const tr = ((0.8 + 2.5 * zeta) / wn).toFixed(2);
+            // Overshoot: exp(-zeta*pi / sqrt(1-zeta^2))
+            const os = zeta < 1 ? (Math.exp((-zeta * Math.PI) / Math.sqrt(1 - zeta*zeta)) * 100).toFixed(1) + '%' : "0%";
+            // Settling Time (4/zeta*wn)
+            const ts = (4 / (zeta * wn)).toFixed(2);
+            
+            document.getElementById('metric-tr').textContent = tr + ' s';
+            document.getElementById('metric-os').textContent = os;
+            document.getElementById('metric-ts').textContent = ts + ' s';
+            
+            const cond = zeta < 1 ? "Underdamped" : (zeta === 1 ? "Critically Damped" : "Overdamped");
+            document.getElementById('metric-cond').textContent = cond;
+            
+            // Analysis Text
+            let analysis = "";
+            if(zeta < 0.4) analysis = "⚠️ Highly oscillatory! System rings for a long time.";
+            else if(zeta > 0.8) analysis = "⚠️ Sluggish. System takes a long time to reach target.";
+            else analysis = "✅ Good balance between speed and stability.";
+            document.getElementById('analysis-text').textContent = analysis;
+        }
+
+        // --- LOGIC: TABS & INTERACTION ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('content-' + tabId).classList.remove('hidden');
+            
+            // Update Nav Styles
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-white', 'text-blue-600', 'text-orange-600', 'text-green-600', 'text-purple-600');
+                btn.classList.add('text-stone-600');
+                btn.querySelector('span').textContent = btn.querySelector('span').textContent.replace('👉 ', '');
+            });
+            
+            const activeBtn = document.getElementById('tab-' + tabId);
+            activeBtn.classList.remove('text-stone-600');
+            activeBtn.classList.add('bg-white');
+            
+            // Re-render chart if needed
+            if(tabId === 'simulator' && !chartInstance) initChart();
+        }
+
+        function showDef(key) {
+            const def = definitions[key];
+            document.getElementById('def-title').textContent = def.title;
+            document.getElementById('def-content').textContent = def.content;
+            document.getElementById('def-math').textContent = def.math;
+            document.getElementById('def-math').classList.remove('hidden');
+        }
+
+        // --- LOGIC: SLIDES ---
+        function renderSlide() {
+            const slide = slides[state.slideIndex];
+            document.getElementById('slide-container').innerHTML = slide.html;
+            document.getElementById('slide-indicator').textContent = `Step ${state.slideIndex + 1} of ${slides.length}`;
+        }
+        function nextSlide() {
+            if (state.slideIndex < slides.length - 1) { state.slideIndex++; renderSlide(); }
+        }
+        function prevSlide() {
+            if (state.slideIndex > 0) { state.slideIndex--; renderSlide(); }
+        }
+
+        // --- LOGIC: QUIZ ---
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+            quizQuestions.forEach((q, idx) => {
+                const qEl = document.createElement('div');
+                qEl.className = "bg-white p-6 rounded-lg shadow border border-stone-200";
+                qEl.innerHTML = `<p class="font-bold text-lg mb-4">${idx+1}. ${q.q}</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    ${q.a.map((opt, optIdx) => `
+                        <button onclick="checkAnswer(${idx}, ${optIdx}, this)" class="quiz-opt-btn p-3 rounded border text-left hover:bg-stone-50 transition-colors" data-q="${idx}" data-opt="${optIdx}">
+                            ${opt}
+                        </button>
+                    `).join('')}
+                </div>`;
+                container.appendChild(qEl);
+            });
+        }
+
+        function checkAnswer(qIdx, optIdx, btn) {
+            // Prevent re-answering
+            const parent = btn.parentElement;
+            if (parent.getAttribute('data-answered') === 'true') return;
+            parent.setAttribute('data-answered', 'true');
+
+            const correctIdx = quizQuestions[qIdx].correct;
+            if (optIdx === correctIdx) {
+                btn.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+                state.score++;
+                document.getElementById('quiz-score').textContent = state.score;
+            } else {
+                btn.classList.add('bg-red-100', 'border-red-500', 'text-red-800');
+                // Highlight correct
+                parent.children[correctIdx].classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+            }
+        }
+
+        function resetQuiz() {
+            state.score = 0;
+            document.getElementById('quiz-score').textContent = 0;
+            initQuiz();
+        }
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('input-zeta').addEventListener('input', updateSimulation);
+            document.getElementById('input-wn').addEventListener('input', updateSimulation);
+            renderSlide();
+            initQuiz();
+            switchTab('anatomy'); // Default Tab
+        });
+
+    </script>
+</body>
+</html>
